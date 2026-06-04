@@ -1,22 +1,38 @@
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import os
+from telegram import Update
+from telegram.ext import (
+    ApplicationBuilder,
+    CommandHandler,
+    MessageHandler,
+    ContextTypes,
+    filters,
+)
 
-TOKEN = "8921530434:AAFAq2jXi2X8Kqoc0QCfi1t9AFa3JIJecwI"
+TOKEN = os.getenv("8921530434:AAFAq2jXi2X8Kqoc0QCfi1t9AFa3JIJecwI")
 
-def start(update, context):
-    update.message.reply_text("🤖 CRM مطب فعال شد")
 
-def echo(update, context):
-    update.message.reply_text("📩 " + update.message.text)
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text(
+        "🤖 ربات CRM مطب فعال شد\n\nسلام 👋 آماده‌ام."
+    )
+
+
+async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+    await update.message.reply_text(f"📩 دریافت شد: {text}")
+
 
 def main():
-    updater = Updater(TOKEN, use_context=True)
-    dp = updater.dispatcher
+    app = ApplicationBuilder().token(TOKEN).build()
 
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(MessageHandler(Filters.text, echo))
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(
+        MessageHandler(filters.TEXT & ~filters.COMMAND, echo)
+    )
 
-    updater.start_polling()
-    updater.idle()
+    print("Bot is running...")
+    app.run_polling()
+
 
 if __name__ == "__main__":
     main()

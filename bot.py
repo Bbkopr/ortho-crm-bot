@@ -8,21 +8,20 @@ from telegram.ext import (
     filters,
 )
 
-TOKEN = os.getenv("8921530434:AAFAq2jXi2X8Kqoc0QCfi1t9AFa3JIJecwI")
+TOKEN = os.environ.get("8921530434:AAFAq2jXi2X8Kqoc0QCfi1t9AFa3JIJecwI")
 
+print("TOKEN FOUND:", TOKEN is not None)
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text(
-        "🤖 ربات CRM مطب فعال شد\n\nسلام 👋 آماده‌ام."
-    )
-
+    await update.message.reply_text("🤖 ربات CRM مطب فعال شد")
 
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    await update.message.reply_text(f"📩 دریافت شد: {text}")
-
+    await update.message.reply_text(update.message.text)
 
 def main():
+    if not TOKEN:
+        raise ValueError("TOKEN variable not found")
+
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
@@ -32,7 +31,6 @@ def main():
 
     print("Bot is running...")
     app.run_polling()
-
 
 if __name__ == "__main__":
     main()
